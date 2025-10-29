@@ -210,7 +210,7 @@ _Success_(return)
 BOOL LcCreate_FetchDevice_FromExternalModule(_Inout_ PLC_CONTEXT ctx, _In_opt_ DWORD cszDevice, _In_opt_ LPSTR szDeviceAlt)
 {
     CHAR szModule[2 * MAX_PATH] = { 0 };
-    Util_GetPathLib(szModule);
+    L_Util_GetPathLib(szModule);
     strcat_s(szModule, sizeof(szModule), "leechcore_device_");
     if(szDeviceAlt) {
         strcat_s(szModule, sizeof(szModule), szDeviceAlt);

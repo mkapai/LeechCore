@@ -176,7 +176,7 @@ BOOL DevicePMEM_SvcStart(_In_ PLC_CONTEXT ctxLC)
         // defaults will be to try to loade relative to executable (NULL).
         f64 = L_Util_IsPlatformBitness64();
         for(i = 0; i < (sizeof(szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0]) / sizeof(LPCSTR)); i++) {
-            Util_GetPathLib(szDriverFile);
+            L_Util_GetPathLib(szDriverFile);
             strcat_s(szDriverFile, _countof(szDriverFile), szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0][i]);
             if(!fopen_s(&pDriverFile, szDriverFile, "rb") && pDriverFile) {
                 fclose(pDriverFile);
