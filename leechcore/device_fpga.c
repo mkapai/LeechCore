@@ -528,12 +528,12 @@ BOOL TLP_ToString(_In_ PBYTE pbTlp, _In_ DWORD cbTlp, _Out_ LPSTR *pszTlpText, _
             hdr->Length
         );
     }
-    Util_FillHexAscii(pbTlp, cbTlp, 0, NULL, &cbHexAscii);
+    L_Util_FillHexAscii(pbTlp, cbTlp, 0, NULL, &cbHexAscii);
     cbResult = cchHdr + 1 + cbHexAscii;
     if(!(szResult = LocalAlloc(0, cbResult))) { return FALSE; }
     memcpy(szResult, szHdr, cchHdr);
     szResult[cchHdr] = '\n';
-    Util_FillHexAscii(pbTlp, cbTlp, 0, szResult + cchHdr + 1, &cbHexAscii);
+    L_Util_FillHexAscii(pbTlp, cbTlp, 0, szResult + cchHdr + 1, &cbHexAscii);
     *pszTlpText = szResult;
     if(pcbTlpText) { *pcbTlpText = cbResult; }
     return TRUE;
@@ -826,7 +826,7 @@ ftdi_retry_old:
     if(fCustomDriver) {
         if(!ctx->dev.hModule) { ctx->dev.hModule = LoadLibraryA(DEVICE_FPGA_DRIVER_LIBRARY); }
         if(!ctx->dev.hModule) {
-            Util_GetPathLib(szModuleFTDI);
+            L_Util_GetPathLib(szModuleFTDI);
             strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, DEVICE_FPGA_DRIVER_LIBRARY);
             ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
         }
@@ -848,7 +848,7 @@ ftdi_retry_old:
     if(fFT601) {
         if(!ctx->dev.hModule) { ctx->dev.hModule = LoadLibraryA((fUseFTD3XXWU ? DEVICE_FPGA_FT601_LIBRARY : DEVICE_FPGA_FT601_OLD_LIBRARY)); }
         if(!ctx->dev.hModule) {
-            Util_GetPathLib(szModuleFTDI);
+            L_Util_GetPathLib(szModuleFTDI);
             strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, (fUseFTD3XXWU ? DEVICE_FPGA_FT601_LIBRARY : DEVICE_FPGA_FT601_OLD_LIBRARY));
             ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
         }
@@ -1058,7 +1058,7 @@ LPSTR DeviceFPGA_InitializeFT2232(_In_ PDEVICE_CONTEXT_FPGA ctx)
     // Load FTDI Library
     ctx->dev.hModule = LoadLibraryA("FTD2XX.dll");
     if(!ctx->dev.hModule) {
-        Util_GetPathLib(szModuleFTDI);
+        L_Util_GetPathLib(szModuleFTDI);
         strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, DEVICE_FPGA_FT2XX_LIBRARY);
         ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
     }
@@ -1617,20 +1617,20 @@ VOID DeviceFPGA_ConfigPrint(_In_ PLC_CONTEXT ctxLC, _In_ PDEVICE_CONTEXT_FPGA ct
             lcprintf(ctxLC, "\n----- FPGA DEVICE CONFIG REGISTERS: %s    SIZE: %i BYTES -----\n", szNAME[i], cb);
             cb = min(cb, sizeof(pb));
             DeviceFPGA_ConfigRead(ctx, 0x0000, pb, cb, flags[i]);
-            Util_PrintHexAscii(ctxLC, pb, cb, 0);
+            L_Util_PrintHexAscii(ctxLC, pb, cb, 0);
         }
     }
     if(DeviceFPGA_PCIeDrpRead(ctx, pb)) {
         lcprintf(ctxLC, "\n----- PCIe CORE Dynamic Reconfiguration Port (DRP)  SIZE: 0x100 BYTES -----\n");
-        Util_PrintHexAscii(ctxLC, pb, 0x100, 0);
+        L_Util_PrintHexAscii(ctxLC, pb, 0x100, 0);
     }
     if(DeviceFPGA_PCIeCfgSpaceCoreRead(ctx, pb, 0)) {
         lcprintf(ctxLC, "\n----- PCIe CONFIGURATION SPACE (no user set values) SIZE: 0x200 BYTES -----\n");
-        Util_PrintHexAscii(ctxLC, pb, 0x200, 0);
+        L_Util_PrintHexAscii(ctxLC, pb, 0x200, 0);
     }
     if(DeviceFPGA_ConfigRead(ctx, 0x0000, pb, 0x1000, FPGA_REG_CORE | FPGA_REG_SHADOWCFGSPACE)) {
         lcprintf(ctxLC, "\n----- PCIe SHADOW CONFIGURATION SPACE (only user set values) SIZE: 0x1000 BYTES -----\n");
-        Util_PrintHexAscii(ctxLC, pb, 0x1000, 0);
+        L_Util_PrintHexAscii(ctxLC, pb, 0x1000, 0);
     }
     lcprintf(ctxLC, "\n");
 }

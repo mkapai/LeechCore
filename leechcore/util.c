@@ -10,7 +10,7 @@
 * .dll/.so file.
 * -- szPath
 */
-VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
+VOID L_Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
 {
     SIZE_T i;
     ZeroMemory(szPath, MAX_PATH);
@@ -22,7 +22,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
 #endif /* _WIN32 */
 #if defined(LINUX) || defined(MACOS)
     Dl_info Info = { 0 };
-    if(!dladdr((void *)Util_GetPathLib, &Info) || !Info.dli_fname) { return; }
+    if(!dladdr((void *)L_Util_GetPathLib, &Info) || !Info.dli_fname) { return; }
     strncpy(szPath, Info.dli_fname, MAX_PATH - 1);
 #endif /* LINUX || MACOS */
     for(i = strlen(szPath) - 1; i > 0; i--) {
@@ -39,7 +39,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
 * -- sz
 * -- return
 */
-QWORD Util_GetNumericA(_In_ LPSTR sz)
+QWORD L_Util_GetNumericA(_In_ LPSTR sz)
 {
     BOOL fhex = sz[0] && sz[1] && (sz[0] == '0') && ((sz[1] == 'x') || (sz[1] == 'X'));
     return strtoull(sz, NULL, fhex ? 16 : 10);
@@ -55,7 +55,7 @@ QWORD Util_GetNumericA(_In_ LPSTR sz)
     "................................................................" \
     "................................................................" \
 
-BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz)
+BOOL L_Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz)
 {
     DWORD i, j, o = 0, iMod, cRows;
     // checks
@@ -112,7 +112,7 @@ BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset,
     return TRUE;
 }
 
-VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset)
+VOID L_Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset)
 {
     DWORD szMax = 0;
     LPSTR sz;
@@ -124,9 +124,9 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
         }
         cb = 0x10000 - cbInitialOffset;
     }
-    Util_FillHexAscii(pb, cb, cbInitialOffset, NULL, &szMax);
+    L_Util_FillHexAscii(pb, cb, cbInitialOffset, NULL, &szMax);
     if(!(sz = LocalAlloc(0, szMax))) { return; }
-    Util_FillHexAscii(pb, cb, cbInitialOffset, sz, &szMax);
+    L_Util_FillHexAscii(pb, cb, cbInitialOffset, sz, &szMax);
     if(ctxLC) {
         lcprintf(ctxLC, "%s", sz);
     } else {
@@ -135,7 +135,7 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
     LocalFree(sz);
 }
 
-VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz)
+VOID L_Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz)
 {
     DWORD i, j;
     strcpy_s(_szBuf, MAX_PATH, sz);
@@ -158,24 +158,24 @@ VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_wri
     }
 }
 
-VOID Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2)
+VOID L_Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2)
 {
     LPSTR psz[2] = { 0 };
-    Util_SplitN(sz, chDelimiter, 2, _szBuf, psz);
+    L_Util_SplitN(sz, chDelimiter, 2, _szBuf, psz);
     *psz1 = psz[0];
     *psz2 = psz[1];
 }
 
-VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3)
+VOID L_Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3)
 {
     LPSTR psz[3] = { 0 };
-    Util_SplitN(sz, chDelimiter, 3, _szBuf, psz);
+    L_Util_SplitN(sz, chDelimiter, 3, _szBuf, psz);
     *psz1 = psz[0];
     *psz2 = psz[1];
     *psz3 = psz[2];
 }
 
-VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
+VOID L_Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
 {
     DWORD i = 0;
     srand((unsigned int)GetTickCount64());
@@ -188,17 +188,17 @@ VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
     }
 }
 
-BOOL Util_IsPlatformBitness64()
+BOOL L_Util_IsPlatformBitness64()
 {
     BOOL fWow64 = TRUE;
-    if(Util_IsProgramBitness64()) {
+    if(L_Util_IsProgramBitness64()) {
         return TRUE;
     }
     IsWow64Process(GetCurrentProcess(), &fWow64);
     return fWow64;
 }
 
-BOOL Util_IsProgramBitness64()
+BOOL L_Util_IsProgramBitness64()
 {
 #ifndef _WIN64
     return FALSE;

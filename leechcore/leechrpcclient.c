@@ -749,7 +749,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
         // RPC SPECIFIC INITIALIZATION BELOW:
         ctxLC->Rpc.fCompress = !ctxLC->Config.fRemoteDisableCompress;
         // parse arguments
-        Util_Split3(ctxLC->Config.szRemote + 6, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
+        L_Util_Split3(ctxLC->Config.szRemote + 6, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
         if(!szArg1 || !szArg1[0] || !szArg2 || !szArg2[0]) { goto fail; }
         // Argument1 : Auth method, insecure | ntlm | kerberos_spn
         if(!_stricmp("insecure", szArg1)) {
@@ -764,7 +764,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
         strncpy_s(ctx->szTcpAddr, _countof(ctx->szTcpAddr), szArg2, MAX_PATH);
         // Argument3 : Options.
         if(szArg3[0]) {
-            Util_SplitN(szArg3, ',', 5, _szBufferOpt, aszOpt);
+            L_Util_SplitN(szArg3, ',', 5, _szBufferOpt, aszOpt);
             for(i = 0; i < 5; i++) {
                 if(0 == _stricmp("nocompress", aszOpt[i])) {
                     ctxLC->Rpc.fCompress = FALSE;
@@ -806,7 +806,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
         // RPC SPECIFIC INITIALIZATION BELOW:
         ctxLC->Rpc.fCompress = !ctxLC->Config.fRemoteDisableCompress;
         // parse arguments
-        Util_Split3(ctxLC->Config.szRemote + 7, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
+        L_Util_Split3(ctxLC->Config.szRemote + 7, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
         if(!szArg1 || !szArg2 || !szArg2[0]) { goto fail; }
         // Argument1 : Auth method, insecure
         if(!_stricmp("insecure", szArg1)) {
@@ -818,7 +818,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
         strncpy_s(ctx->szTcpAddr, _countof(ctx->szTcpAddr), szArg2, MAX_PATH);
         // Argument3 : Options.
         if(szArg3[0]) {
-            Util_SplitN(szArg3, ',', 6, _szBufferOpt, aszOpt);
+            L_Util_SplitN(szArg3, ',', 6, _szBufferOpt, aszOpt);
             for(i = 0; i < 6; i++) {
                 if(0 == _stricmp("nocompress", aszOpt[i])) {
                     ctxLC->Rpc.fCompress = FALSE;
@@ -866,7 +866,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
     ctxLC->Rpc.fCompress = ctxLC->Rpc.fCompress && LeechRPC_CompressInitialize(&ctx->Compress);
     ctxLC->Config.fRemoteDisableCompress = ctxLC->Config.fRemoteDisableCompress && !ctxLC->Rpc.fCompress;
     // call open on the remote service
-    Util_GenRandom((PBYTE)&ctxLC->Rpc.dwRpcClientId, sizeof(DWORD));
+    L_Util_GenRandom((PBYTE)&ctxLC->Rpc.dwRpcClientId, sizeof(DWORD));
     MsgReq.tpMsg = LEECHRPC_MSGTYPE_OPEN_REQ;
     memcpy(&MsgReq.cfg, &ctxLC->Config, sizeof(LC_CONFIG));
     ZeroMemory(MsgReq.cfg.szRemote, _countof(MsgReq.cfg.szRemote));

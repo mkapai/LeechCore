@@ -1,0 +1,400 @@
+diff --git a/leechcore/device_file.c b/leechcore/device_file.c
+index dd169ae..0aac8e0 100644
+--- a/leechcore/device_file.c
++++ b/leechcore/device_file.c
+@@ -240,7 +240,7 @@ VOID DeviceFile_ReadScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_ P
+                     pMEM->qwA,
+                     pMEM->cb
+                 );
+-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
++                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+             }
+         } else {
+             lcprintfvvv_fn(ctxLC, "READ FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);
+@@ -294,7 +294,7 @@ VOID DeviceFile_WriteScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_
+                     pMEM->qwA,
+                     pMEM->cb
+                 );
+-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
++                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+             }
+         } else {
+             lcprintfvvv_fn(ctxLC, "WRITE FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);
+diff --git a/leechcore/device_fpga.c b/leechcore/device_fpga.c
+index e243515..89305ed 100644
+--- a/leechcore/device_fpga.c
++++ b/leechcore/device_fpga.c
+@@ -528,12 +528,12 @@ BOOL TLP_ToString(_In_ PBYTE pbTlp, _In_ DWORD cbTlp, _Out_ LPSTR *pszTlpText, _
+             hdr->Length
+         );
+     }
+-    Util_FillHexAscii(pbTlp, cbTlp, 0, NULL, &cbHexAscii);
++    L_Util_FillHexAscii(pbTlp, cbTlp, 0, NULL, &cbHexAscii);
+     cbResult = cchHdr + 1 + cbHexAscii;
+     if(!(szResult = LocalAlloc(0, cbResult))) { return FALSE; }
+     memcpy(szResult, szHdr, cchHdr);
+     szResult[cchHdr] = '\n';
+-    Util_FillHexAscii(pbTlp, cbTlp, 0, szResult + cchHdr + 1, &cbHexAscii);
++    L_Util_FillHexAscii(pbTlp, cbTlp, 0, szResult + cchHdr + 1, &cbHexAscii);
+     *pszTlpText = szResult;
+     if(pcbTlpText) { *pcbTlpText = cbResult; }
+     return TRUE;
+@@ -826,7 +826,7 @@ ftdi_retry_old:
+     if(fCustomDriver) {
+         if(!ctx->dev.hModule) { ctx->dev.hModule = LoadLibraryA(DEVICE_FPGA_DRIVER_LIBRARY); }
+         if(!ctx->dev.hModule) {
+-            Util_GetPathLib(szModuleFTDI);
++            L_Util_GetPathLib(szModuleFTDI);
+             strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, DEVICE_FPGA_DRIVER_LIBRARY);
+             ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
+         }
+@@ -848,7 +848,7 @@ ftdi_retry_old:
+     if(fFT601) {
+         if(!ctx->dev.hModule) { ctx->dev.hModule = LoadLibraryA((fUseFTD3XXWU ? DEVICE_FPGA_FT601_LIBRARY : DEVICE_FPGA_FT601_OLD_LIBRARY)); }
+         if(!ctx->dev.hModule) {
+-            Util_GetPathLib(szModuleFTDI);
++            L_Util_GetPathLib(szModuleFTDI);
+             strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, (fUseFTD3XXWU ? DEVICE_FPGA_FT601_LIBRARY : DEVICE_FPGA_FT601_OLD_LIBRARY));
+             ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
+         }
+@@ -1058,7 +1058,7 @@ LPSTR DeviceFPGA_InitializeFT2232(_In_ PDEVICE_CONTEXT_FPGA ctx)
+     // Load FTDI Library
+     ctx->dev.hModule = LoadLibraryA("FTD2XX.dll");
+     if(!ctx->dev.hModule) {
+-        Util_GetPathLib(szModuleFTDI);
++        L_Util_GetPathLib(szModuleFTDI);
+         strcat_s(szModuleFTDI, sizeof(szModuleFTDI) - 1, DEVICE_FPGA_FT2XX_LIBRARY);
+         ctx->dev.hModule = LoadLibraryA(szModuleFTDI);
+     }
+@@ -1617,20 +1617,20 @@ VOID DeviceFPGA_ConfigPrint(_In_ PLC_CONTEXT ctxLC, _In_ PDEVICE_CONTEXT_FPGA ct
+             lcprintf(ctxLC, "\n----- FPGA DEVICE CONFIG REGISTERS: %s    SIZE: %i BYTES -----\n", szNAME[i], cb);
+             cb = min(cb, sizeof(pb));
+             DeviceFPGA_ConfigRead(ctx, 0x0000, pb, cb, flags[i]);
+-            Util_PrintHexAscii(ctxLC, pb, cb, 0);
++            L_Util_PrintHexAscii(ctxLC, pb, cb, 0);
+         }
+     }
+     if(DeviceFPGA_PCIeDrpRead(ctx, pb)) {
+         lcprintf(ctxLC, "\n----- PCIe CORE Dynamic Reconfiguration Port (DRP)  SIZE: 0x100 BYTES -----\n");
+-        Util_PrintHexAscii(ctxLC, pb, 0x100, 0);
++        L_Util_PrintHexAscii(ctxLC, pb, 0x100, 0);
+     }
+     if(DeviceFPGA_PCIeCfgSpaceCoreRead(ctx, pb, 0)) {
+         lcprintf(ctxLC, "\n----- PCIe CONFIGURATION SPACE (no user set values) SIZE: 0x200 BYTES -----\n");
+-        Util_PrintHexAscii(ctxLC, pb, 0x200, 0);
++        L_Util_PrintHexAscii(ctxLC, pb, 0x200, 0);
+     }
+     if(DeviceFPGA_ConfigRead(ctx, 0x0000, pb, 0x1000, FPGA_REG_CORE | FPGA_REG_SHADOWCFGSPACE)) {
+         lcprintf(ctxLC, "\n----- PCIe SHADOW CONFIGURATION SPACE (only user set values) SIZE: 0x1000 BYTES -----\n");
+-        Util_PrintHexAscii(ctxLC, pb, 0x1000, 0);
++        L_Util_PrintHexAscii(ctxLC, pb, 0x1000, 0);
+     }
+     lcprintf(ctxLC, "\n");
+ }
+diff --git a/leechcore/device_pmem.c b/leechcore/device_pmem.c
+index 4950da5..2fb140c 100644
+--- a/leechcore/device_pmem.c
++++ b/leechcore/device_pmem.c
+@@ -96,7 +96,7 @@ VOID DevicePMEM_ReadScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_ P
+                     pMEM->qwA,
+                     pMEM->cb
+                 );
+-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
++                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+             }
+         } else {
+             lcprintfvvv_fn(ctxLC, "READ FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);
+@@ -174,7 +174,7 @@ BOOL DevicePMEM_SvcStart(_In_ PLC_CONTEXT ctxLC)
+         // NB! defaults to locating driver .sys file relative to the loaded
+         // 'leechcore.dll' - if unable to locate library (for whatever reason)
+         // defaults will be to try to loade relative to executable (NULL).
+-        f64 = Util_IsPlatformBitness64();
++        f64 = L_Util_IsPlatformBitness64();
+         for(i = 0; i < (sizeof(szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0]) / sizeof(LPCSTR)); i++) {
+             Util_GetPathLib(szDriverFile);
+             strcat_s(szDriverFile, _countof(szDriverFile), szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0][i]);
+diff --git a/leechcore/leechcore.c b/leechcore/leechcore.c
+index 2d9ccf8..815d8a8 100644
+--- a/leechcore/leechcore.c
++++ b/leechcore/leechcore.c
+@@ -163,7 +163,7 @@ VOID LcCreate_FetchDeviceParameter(_Inout_ PLC_CONTEXT ctxLC)
+         pe = &ctxLC->pDeviceParameter[ctxLC->cDeviceParameter];
+         strncpy_s(pe->szName, _countof(pe->szName), szToken, szDelim - szToken);
+         strncpy_s(pe->szValue, _countof(pe->szValue), szDelim + 1, _TRUNCATE);
+-        pe->qwValue = Util_GetNumericA(pe->szValue);
++        pe->qwValue = L_Util_GetNumericA(pe->szValue);
+         if((0 == pe->qwValue) && !_stricmp(pe->szValue, "true")) {
+             pe->qwValue = 1;
+         }
+@@ -428,7 +428,7 @@ EXPORTED_FUNCTION HANDLE LcCreateEx(_Inout_ PLC_CONFIG pLcCreateConfig, _Out_opt
+     // check if open existing (primary) device:
+     if(!pLcCreateConfig->szRemote[0] && (0 == _strnicmp("existing", pLcCreateConfig->szDevice, 8))) {
+         if(0 == _strnicmp("existing://", pLcCreateConfig->szDevice, 11)) {
+-            qwExistingHandle = Util_GetNumericA(pLcCreateConfig->szDevice + 11);
++            qwExistingHandle = L_Util_GetNumericA(pLcCreateConfig->szDevice + 11);
+         }
+         EnterCriticalSection(&g_ctx.Lock);
+         ctxLC = (PLC_CONTEXT)g_ctx.FLink;
+diff --git a/leechcore/leechrpcclient.c b/leechcore/leechrpcclient.c
+index 912c7d9..cbab003 100644
+--- a/leechcore/leechrpcclient.c
++++ b/leechcore/leechrpcclient.c
+@@ -749,7 +749,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
+         // RPC SPECIFIC INITIALIZATION BELOW:
+         ctxLC->Rpc.fCompress = !ctxLC->Config.fRemoteDisableCompress;
+         // parse arguments
+-        Util_Split3(ctxLC->Config.szRemote + 6, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
++        L_Util_Split3(ctxLC->Config.szRemote + 6, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
+         if(!szArg1 || !szArg1[0] || !szArg2 || !szArg2[0]) { goto fail; }
+         // Argument1 : Auth method, insecure | ntlm | kerberos_spn
+         if(!_stricmp("insecure", szArg1)) {
+@@ -764,7 +764,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
+         strncpy_s(ctx->szTcpAddr, _countof(ctx->szTcpAddr), szArg2, MAX_PATH);
+         // Argument3 : Options.
+         if(szArg3[0]) {
+-            Util_SplitN(szArg3, ',', 5, _szBufferOpt, aszOpt);
++            L_Util_SplitN(szArg3, ',', 5, _szBufferOpt, aszOpt);
+             for(i = 0; i < 5; i++) {
+                 if(0 == _stricmp("nocompress", aszOpt[i])) {
+                     ctxLC->Rpc.fCompress = FALSE;
+@@ -806,7 +806,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
+         // RPC SPECIFIC INITIALIZATION BELOW:
+         ctxLC->Rpc.fCompress = !ctxLC->Config.fRemoteDisableCompress;
+         // parse arguments
+-        Util_Split3(ctxLC->Config.szRemote + 7, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
++        L_Util_Split3(ctxLC->Config.szRemote + 7, ':', _szBufferArg, &szArg1, &szArg2, &szArg3);
+         if(!szArg1 || !szArg2 || !szArg2[0]) { goto fail; }
+         // Argument1 : Auth method, insecure
+         if(!_stricmp("insecure", szArg1)) {
+@@ -818,7 +818,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
+         strncpy_s(ctx->szTcpAddr, _countof(ctx->szTcpAddr), szArg2, MAX_PATH);
+         // Argument3 : Options.
+         if(szArg3[0]) {
+-            Util_SplitN(szArg3, ',', 6, _szBufferOpt, aszOpt);
++            L_Util_SplitN(szArg3, ',', 6, _szBufferOpt, aszOpt);
+             for(i = 0; i < 6; i++) {
+                 if(0 == _stricmp("nocompress", aszOpt[i])) {
+                     ctxLC->Rpc.fCompress = FALSE;
+@@ -866,7 +866,7 @@ BOOL LeechRpc_Open(_Inout_ PLC_CONTEXT ctxLC, _Out_opt_ PPLC_CONFIG_ERRORINFO pp
+     ctxLC->Rpc.fCompress = ctxLC->Rpc.fCompress && LeechRPC_CompressInitialize(&ctx->Compress);
+     ctxLC->Config.fRemoteDisableCompress = ctxLC->Config.fRemoteDisableCompress && !ctxLC->Rpc.fCompress;
+     // call open on the remote service
+-    Util_GenRandom((PBYTE)&ctxLC->Rpc.dwRpcClientId, sizeof(DWORD));
++    L_Util_GenRandom((PBYTE)&ctxLC->Rpc.dwRpcClientId, sizeof(DWORD));
+     MsgReq.tpMsg = LEECHRPC_MSGTYPE_OPEN_REQ;
+     memcpy(&MsgReq.cfg, &ctxLC->Config, sizeof(LC_CONFIG));
+     ZeroMemory(MsgReq.cfg.szRemote, _countof(MsgReq.cfg.szRemote));
+diff --git a/leechcore/util.c b/leechcore/util.c
+index 8a3ee5a..3d341c5 100644
+--- a/leechcore/util.c
++++ b/leechcore/util.c
+@@ -10,7 +10,7 @@
+ * .dll/.so file.
+ * -- szPath
+ */
+-VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
++VOID L_Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
+ {
+     SIZE_T i;
+     ZeroMemory(szPath, MAX_PATH);
+@@ -22,7 +22,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
+ #endif /* _WIN32 */
+ #if defined(LINUX) || defined(MACOS)
+     Dl_info Info = { 0 };
+-    if(!dladdr((void *)Util_GetPathLib, &Info) || !Info.dli_fname) { return; }
++    if(!dladdr((void *)L_Util_GetPathLib, &Info) || !Info.dli_fname) { return; }
+     strncpy(szPath, Info.dli_fname, MAX_PATH - 1);
+ #endif /* LINUX || MACOS */
+     for(i = strlen(szPath) - 1; i > 0; i--) {
+@@ -39,7 +39,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath)
+ * -- sz
+ * -- return
+ */
+-QWORD Util_GetNumericA(_In_ LPSTR sz)
++QWORD L_Util_GetNumericA(_In_ LPSTR sz)
+ {
+     BOOL fhex = sz[0] && sz[1] && (sz[0] == '0') && ((sz[1] == 'x') || (sz[1] == 'X'));
+     return strtoull(sz, NULL, fhex ? 16 : 10);
+@@ -55,7 +55,7 @@ QWORD Util_GetNumericA(_In_ LPSTR sz)
+     "................................................................" \
+     "................................................................" \
+ 
+-BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz)
++BOOL L_Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz)
+ {
+     DWORD i, j, o = 0, iMod, cRows;
+     // checks
+@@ -112,7 +112,7 @@ BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset,
+     return TRUE;
+ }
+ 
+-VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset)
++VOID L_Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset)
+ {
+     DWORD szMax = 0;
+     LPSTR sz;
+@@ -124,9 +124,9 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
+         }
+         cb = 0x10000 - cbInitialOffset;
+     }
+-    Util_FillHexAscii(pb, cb, cbInitialOffset, NULL, &szMax);
++    L_Util_FillHexAscii(pb, cb, cbInitialOffset, NULL, &szMax);
+     if(!(sz = LocalAlloc(0, szMax))) { return; }
+-    Util_FillHexAscii(pb, cb, cbInitialOffset, sz, &szMax);
++    L_Util_FillHexAscii(pb, cb, cbInitialOffset, sz, &szMax);
+     if(ctxLC) {
+         lcprintf(ctxLC, "%s", sz);
+     } else {
+@@ -135,7 +135,7 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
+     LocalFree(sz);
+ }
+ 
+-VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz)
++VOID L_Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz)
+ {
+     DWORD i, j;
+     strcpy_s(_szBuf, MAX_PATH, sz);
+@@ -158,24 +158,24 @@ VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_wri
+     }
+ }
+ 
+-VOID Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2)
++VOID L_Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2)
+ {
+     LPSTR psz[2] = { 0 };
+-    Util_SplitN(sz, chDelimiter, 2, _szBuf, psz);
++    L_Util_SplitN(sz, chDelimiter, 2, _szBuf, psz);
+     *psz1 = psz[0];
+     *psz2 = psz[1];
+ }
+ 
+-VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3)
++VOID L_Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3)
+ {
+     LPSTR psz[3] = { 0 };
+-    Util_SplitN(sz, chDelimiter, 3, _szBuf, psz);
++    L_Util_SplitN(sz, chDelimiter, 3, _szBuf, psz);
+     *psz1 = psz[0];
+     *psz2 = psz[1];
+     *psz3 = psz[2];
+ }
+ 
+-VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
++VOID L_Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
+ {
+     DWORD i = 0;
+     srand((unsigned int)GetTickCount64());
+@@ -188,17 +188,17 @@ VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb)
+     }
+ }
+ 
+-BOOL Util_IsPlatformBitness64()
++BOOL L_Util_IsPlatformBitness64()
+ {
+     BOOL fWow64 = TRUE;
+-    if(Util_IsProgramBitness64()) {
++    if(L_Util_IsProgramBitness64()) {
+         return TRUE;
+     }
+     IsWow64Process(GetCurrentProcess(), &fWow64);
+     return fWow64;
+ }
+ 
+-BOOL Util_IsProgramBitness64()
++BOOL L_Util_IsProgramBitness64()
+ {
+ #ifndef _WIN64
+     return FALSE;
+diff --git a/leechcore/util.h b/leechcore/util.h
+index d42d154..1f6b61e 100644
+--- a/leechcore/util.h
++++ b/leechcore/util.h
+@@ -14,7 +14,7 @@
+ * .dll/.so file.
+ * -- szPath
+ */
+-VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
++VOID L_Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
+ 
+ /*
+ * Try retrieve a numerical value from sz. If sz starts with '0x' it will be
+@@ -22,7 +22,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
+ * -- sz
+ * -- return
+ */
+-QWORD Util_GetNumericA(_In_ LPSTR sz);
++QWORD L_Util_GetNumericA(_In_ LPSTR sz);
+ 
+ /*
+ * Print a maximum of 8192 bytes of binary data as hexascii on the screen.
+@@ -31,7 +31,7 @@ QWORD Util_GetNumericA(_In_ LPSTR sz);
+ * -- cb
+ * -- cbInitialOffset = offset, must be max 0x1000 and multiple of 0x10.
+ */
+-VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset);
++VOID L_Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset);
+ 
+ /*
+ * Fill a human readable hex ascii memory dump into the caller supplied sz buffer.
+@@ -42,7 +42,7 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
+ * -- pcsz = IF sz==NULL :: size of buffer (including space for terminating NULL) on exit
+ *           IF sz!=NULL :: size of buffer on entry, size of characters (excluding terminating NULL) on exit.
+ */
+-BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz);
++BOOL L_Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz);
+ 
+ /*
+ * Split a string into two at the first chDelimiter character. If no 2nd string
+@@ -54,8 +54,8 @@ BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset,
+ * -- psz1
+ * -- psz2
+ */
+-VOID Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2);
+-VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3);
++VOID L_Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2);
++VOID L_Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3);
+ 
+ /*
+ * Split a string into N strings at the chDelimiter character. If no Nth string
+@@ -66,14 +66,14 @@ VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PC
+ * -- _szBuf = MAX_PATH sized buffer that will be overwritten and used throughout the lifetime of *ppsz outputs.
+ * -- psz = array of pointers to receive the N strings.
+ */
+-VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz);
++VOID L_Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz);
+ 
+ /*
+ * Simple random number function.
+ * -- pb = buffer to receive random data.
+ * -- cb = length of random data to create.
+ */
+-VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
++VOID L_Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
+ 
+ /*
+ * Returns true if this is a 64-bit Windows operating system.
+@@ -81,13 +81,13 @@ VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
+ * Function have no meaning on Linux.
+ * -- return
+ */
+-BOOL Util_IsPlatformBitness64();
++BOOL L_Util_IsPlatformBitness64();
+ 
+ /*
+ * Return true if this program is a 64-bit program.
+ * -- return
+ */
+-BOOL Util_IsProgramBitness64();
++BOOL L_Util_IsProgramBitness64();
+ 
+ #ifdef _WIN32
+ 
+@@ -99,7 +99,7 @@ BOOL Util_IsProgramBitness64();
+ * -- return
+ */
+ _Success_(return)
+-BOOL Util_GetBytesPipe(_In_ HANDLE hPipe_Rd, _Out_writes_opt_(cb) PBYTE pb, _In_ DWORD cb);
++BOOL L_Util_GetBytesPipe(_In_ HANDLE hPipe_Rd, _Out_writes_opt_(cb) PBYTE pb, _In_ DWORD cb);
+ 
+ #endif /* _WIN32 */
+ 

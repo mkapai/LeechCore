@@ -240,7 +240,7 @@ VOID DeviceFile_ReadScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_ P
                     pMEM->qwA,
                     pMEM->cb
                 );
-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
             }
         } else {
             lcprintfvvv_fn(ctxLC, "READ FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);
@@ -294,7 +294,7 @@ VOID DeviceFile_WriteScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_ 
                     pMEM->qwA,
                     pMEM->cb
                 );
-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
             }
         } else {
             lcprintfvvv_fn(ctxLC, "WRITE FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);

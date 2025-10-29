@@ -14,7 +14,7 @@
 * .dll/.so file.
 * -- szPath
 */
-VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
+VOID L_Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
 
 /*
 * Try retrieve a numerical value from sz. If sz starts with '0x' it will be
@@ -22,7 +22,7 @@ VOID Util_GetPathLib(_Out_writes_(MAX_PATH) PCHAR szPath);
 * -- sz
 * -- return
 */
-QWORD Util_GetNumericA(_In_ LPSTR sz);
+QWORD L_Util_GetNumericA(_In_ LPSTR sz);
 
 /*
 * Print a maximum of 8192 bytes of binary data as hexascii on the screen.
@@ -31,7 +31,7 @@ QWORD Util_GetNumericA(_In_ LPSTR sz);
 * -- cb
 * -- cbInitialOffset = offset, must be max 0x1000 and multiple of 0x10.
 */
-VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset);
+VOID L_Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset);
 
 /*
 * Fill a human readable hex ascii memory dump into the caller supplied sz buffer.
@@ -42,7 +42,7 @@ VOID Util_PrintHexAscii(_In_opt_ PLC_CONTEXT ctxLC, _In_ PBYTE pb, _In_ DWORD cb
 * -- pcsz = IF sz==NULL :: size of buffer (including space for terminating NULL) on exit
 *           IF sz!=NULL :: size of buffer on entry, size of characters (excluding terminating NULL) on exit.
 */
-BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz);
+BOOL L_Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset, _Inout_opt_ LPSTR sz, _Inout_ PDWORD pcsz);
 
 /*
 * Split a string into two at the first chDelimiter character. If no 2nd string
@@ -54,8 +54,8 @@ BOOL Util_FillHexAscii(_In_ PBYTE pb, _In_ DWORD cb, _In_ DWORD cbInitialOffset,
 * -- psz1
 * -- psz2
 */
-VOID Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2);
-VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3);
+VOID L_Util_Split2(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2);
+VOID L_Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Out_ LPSTR *psz1, _Out_ LPSTR *psz2, _Out_ LPSTR *psz3);
 
 /*
 * Split a string into N strings at the chDelimiter character. If no Nth string
@@ -66,14 +66,14 @@ VOID Util_Split3(_In_ LPSTR sz, _In_ CHAR chDelimiter, _Out_writes_(MAX_PATH) PC
 * -- _szBuf = MAX_PATH sized buffer that will be overwritten and used throughout the lifetime of *ppsz outputs.
 * -- psz = array of pointers to receive the N strings.
 */
-VOID Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz);
+VOID L_Util_SplitN(_In_ LPSTR sz, _In_ CHAR chDelimiter, _In_ DWORD cpsz, _Out_writes_(MAX_PATH) PCHAR _szBuf, _Inout_ LPSTR *psz);
 
 /*
 * Simple random number function.
 * -- pb = buffer to receive random data.
 * -- cb = length of random data to create.
 */
-VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
+VOID L_Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
 
 /*
 * Returns true if this is a 64-bit Windows operating system.
@@ -81,13 +81,13 @@ VOID Util_GenRandom(_Out_ PBYTE pb, _In_ DWORD cb);
 * Function have no meaning on Linux.
 * -- return
 */
-BOOL Util_IsPlatformBitness64();
+BOOL L_Util_IsPlatformBitness64();
 
 /*
 * Return true if this program is a 64-bit program.
 * -- return
 */
-BOOL Util_IsProgramBitness64();
+BOOL L_Util_IsProgramBitness64();
 
 #ifdef _WIN32
 
@@ -99,7 +99,7 @@ BOOL Util_IsProgramBitness64();
 * -- return
 */
 _Success_(return)
-BOOL Util_GetBytesPipe(_In_ HANDLE hPipe_Rd, _Out_writes_opt_(cb) PBYTE pb, _In_ DWORD cb);
+BOOL L_Util_GetBytesPipe(_In_ HANDLE hPipe_Rd, _Out_writes_opt_(cb) PBYTE pb, _In_ DWORD cb);
 
 #endif /* _WIN32 */
 

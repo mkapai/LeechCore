@@ -163,7 +163,7 @@ VOID LcCreate_FetchDeviceParameter(_Inout_ PLC_CONTEXT ctxLC)
         pe = &ctxLC->pDeviceParameter[ctxLC->cDeviceParameter];
         strncpy_s(pe->szName, _countof(pe->szName), szToken, szDelim - szToken);
         strncpy_s(pe->szValue, _countof(pe->szValue), szDelim + 1, _TRUNCATE);
-        pe->qwValue = Util_GetNumericA(pe->szValue);
+        pe->qwValue = L_Util_GetNumericA(pe->szValue);
         if((0 == pe->qwValue) && !_stricmp(pe->szValue, "true")) {
             pe->qwValue = 1;
         }
@@ -428,7 +428,7 @@ EXPORTED_FUNCTION HANDLE LcCreateEx(_Inout_ PLC_CONFIG pLcCreateConfig, _Out_opt
     // check if open existing (primary) device:
     if(!pLcCreateConfig->szRemote[0] && (0 == _strnicmp("existing", pLcCreateConfig->szDevice, 8))) {
         if(0 == _strnicmp("existing://", pLcCreateConfig->szDevice, 11)) {
-            qwExistingHandle = Util_GetNumericA(pLcCreateConfig->szDevice + 11);
+            qwExistingHandle = L_Util_GetNumericA(pLcCreateConfig->szDevice + 11);
         }
         EnterCriticalSection(&g_ctx.Lock);
         ctxLC = (PLC_CONTEXT)g_ctx.FLink;

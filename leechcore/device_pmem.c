@@ -96,7 +96,7 @@ VOID DevicePMEM_ReadScatter(_In_ PLC_CONTEXT ctxLC, _In_ DWORD cpMEMs, _Inout_ P
                     pMEM->qwA,
                     pMEM->cb
                 );
-                Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
+                L_Util_PrintHexAscii(ctxLC, pMEM->pb, pMEM->cb, 0);
             }
         } else {
             lcprintfvvv_fn(ctxLC, "READ FAILED:\n        offset=%016llx req_len=%08x\n", pMEM->qwA, pMEM->cb);
@@ -174,7 +174,7 @@ BOOL DevicePMEM_SvcStart(_In_ PLC_CONTEXT ctxLC)
         // NB! defaults to locating driver .sys file relative to the loaded
         // 'leechcore.dll' - if unable to locate library (for whatever reason)
         // defaults will be to try to loade relative to executable (NULL).
-        f64 = Util_IsPlatformBitness64();
+        f64 = L_Util_IsPlatformBitness64();
         for(i = 0; i < (sizeof(szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0]) / sizeof(LPCSTR)); i++) {
             Util_GetPathLib(szDriverFile);
             strcat_s(szDriverFile, _countof(szDriverFile), szDEVICEPMEM_DRIVERFILE[f64 ? 1 : 0][i]);
